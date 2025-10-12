@@ -1,6 +1,6 @@
 # Proyecto final de Aplicaciones Moviles
 ## Wilber Valdez Quintero - 00000247180
-##
+## Luis Alejandro Rivas Moreno - 00000118724
 ##
 ##
 
