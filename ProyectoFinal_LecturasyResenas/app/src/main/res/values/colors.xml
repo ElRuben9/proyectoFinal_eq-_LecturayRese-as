@@ -3,5 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="darkBlue">#1F2937</color>
+    <color name="lightGray">#CACACA</color>
+    <color name="spinner_background">#9E9E9E</color>
+
 
 </resources>

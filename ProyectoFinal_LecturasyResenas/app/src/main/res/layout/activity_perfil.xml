@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:id="@+id/PerfilActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -191,7 +192,7 @@
             android:layout_height="wrap_content"
             android:text="Editar información personal"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#1E1E1E"
+            android:backgroundTint="@color/darkBlue"
             android:textColor="#FFFFFF" />
 
         <Button
