@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689560545771",
+    "project_id": "libros-4f363",
+    "storage_bucket": "libros-4f363.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689560545771:android:c64e4004f0789d71fe51ae",
+        "android_client_info": {
+          "package_name": "ruben.gutierrez.proyectofinal_lecturasyresenas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDlbAStbC762sGm9q9kmBXYILZtunohCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
