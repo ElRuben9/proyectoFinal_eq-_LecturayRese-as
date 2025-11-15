@@ -2,8 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
-    id("kotlin-kapt")
-
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -16,7 +15,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,36 +27,47 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 
-// THIS IS CORRECT
 dependencies {
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
 
-    // AndroidX y Material
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.room.common.jvm)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
-    implementation(libs.androidx.room.ktx)
-    kapt("androidx.room:room-compiler:2.8.3")
-    // Tests
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-}
+
+
+        implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+        implementation("com.google.firebase:firebase-auth")
+        implementation("com.google.firebase:firebase-database")
+        implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
+
+
+        // AndroidX & Material
+        implementation(libs.androidx.core.ktx)
+        implementation(libs.androidx.appcompat)
+        implementation(libs.material)
+        implementation(libs.androidx.activity)
+        implementation(libs.androidx.constraintlayout)
+
+        // ViewModel + LiveData
+        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
+
+        // Glide
+        implementation("com.github.bumptech.glide:glide:4.16.0")
+        kapt("com.github.bumptech.glide:compiler:4.16.0")
+
+        // Tests
+        testImplementation(libs.junit)
+        androidTestImplementation(libs.androidx.junit)
+        androidTestImplementation(libs.androidx.espresso.core)
+    }
+
 

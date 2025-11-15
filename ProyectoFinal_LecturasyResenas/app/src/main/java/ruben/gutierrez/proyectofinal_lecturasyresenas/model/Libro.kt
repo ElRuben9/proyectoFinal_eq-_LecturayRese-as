@@ -1,20 +1,16 @@
 package ruben.gutierrez.proyectofinal_lecturasyresenas.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "libros")
 data class Libro(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val isbn: String?,
-    val titulo: String,
-    val autor: String,
-    val categoria: String,
-    val tema: String?,
-    val genero: String?,
-    val paginas: Int?,
-    val sinopsis: String?,
-    val paginaActual: Int?,
-    val portadaUri: String?,
-    val userId: String
+    val id: String? = null,
+    val isbn: String? = null,
+    val titulo: String = "",
+    val autor: String = "",
+    val categoria: String = "",
+    val tema: String? = null,
+    val genero: String? = null,
+    val paginas: Int? = null,
+    val sinopsis: String? = null,
+    val paginaActual: Int? = null,
+    val portadaUri: String? = null,
+    val userId: String = ""
 )

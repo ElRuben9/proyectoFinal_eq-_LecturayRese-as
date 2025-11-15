@@ -7,11 +7,10 @@ import android.os.Bundle
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
-import ruben.gutierrez.proyectofinal_lecturasyresenas.data.AppDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
-import kotlinx.coroutines.launch
 
 class AgregarLibroActivity : AppCompatActivity() {
 
@@ -29,9 +28,6 @@ class AgregarLibroActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_book)
 
-        val db = AppDatabase.getInstance(this)
-        val dao = db.libroDao()
-
         val isbn = findViewById<EditText>(R.id.edtISBN)
         val titulo = findViewById<EditText>(R.id.edtTitulo)
         val autor = findViewById<EditText>(R.id.edtAutor)
@@ -46,15 +42,11 @@ class AgregarLibroActivity : AppCompatActivity() {
         val btnCancelar = findViewById<Button>(R.id.btnCancelar)
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        // --- Seleccionar imagen ---
         btnSeleccionarImg.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK).apply {
-                type = "image/*"
-            }
+            val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             seleccionarImagen.launch(intent)
         }
 
-        // --- Botón Guardar ---
         btnGuardar.setOnClickListener {
 
             if (titulo.text.isBlank() || autor.text.isBlank()) {
@@ -62,7 +54,7 @@ class AgregarLibroActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val nuevoLibro = Libro(
+            val libro = Libro(
                 isbn = isbn.text.toString().ifBlank { null },
                 titulo = titulo.text.toString(),
                 autor = autor.text.toString(),
@@ -72,20 +64,54 @@ class AgregarLibroActivity : AppCompatActivity() {
                 paginas = paginas.text.toString().toIntOrNull(),
                 sinopsis = sinopsis.text.toString(),
                 paginaActual = paginaActual.text.toString().toIntOrNull(),
-                portadaUri = portadaUri?.toString(),
+                portadaUri = null,
                 userId = uid
             )
 
-            lifecycleScope.launch {
-                dao.insertarLibro(nuevoLibro)
-                Toast.makeText(this@AgregarLibroActivity, "Libro guardado", Toast.LENGTH_SHORT).show()
-                finish()
+            // Si hay imagen, primero se sube a Storage
+            if (portadaUri != null) {
+                subirImagenYGuardarLibro(libro)
+            } else {
+                guardarLibroEnFirestore(libro)
             }
         }
 
-        // --- Botón Cancelar ---
-        btnCancelar.setOnClickListener {
-            finish()
-        }
+        btnCancelar.setOnClickListener { finish() }
     }
+
+    private fun subirImagenYGuardarLibro(libro: Libro) {
+        val ref = FirebaseStorage.getInstance().reference
+            .child("portadas/${System.currentTimeMillis()}_${libro.userId}.jpg")
+
+        ref.putFile(portadaUri!!)
+            .continueWithTask { task ->
+                if (!task.isSuccessful) throw task.exception ?: Exception("Error subiendo imagen")
+                ref.downloadUrl
+            }
+            .addOnSuccessListener { downloadUrl ->
+                val libroConImagen = libro.copy(portadaUri = downloadUrl.toString())
+                guardarLibroEnFirestore(libroConImagen)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error subiendo la imagen", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun guardarLibroEnFirestore(libro: Libro) {
+        val firestore = FirebaseFirestore.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("libros")
+            .add(libro) // Firestore generará un ID automáticamente
+            .addOnSuccessListener {
+                Toast.makeText(this, "Libro guardado correctamente", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error guardando el libro", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }

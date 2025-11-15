@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
 
-class LibroAdapter :
-    ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallback()) {
+class LibroAdapter : ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LibroViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -25,41 +25,48 @@ class LibroAdapter :
         holder.bind(getItem(position))
     }
 
-    class LibroViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class LibroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val portada = view.findViewById<ImageView>(R.id.portadaLibro)
-        private val titulo = view.findViewById<TextView>(R.id.tituloLibro)
-        private val autor = view.findViewById<TextView>(R.id.autorLibro)
-        private val rating = view.findViewById<RatingBar>(R.id.ratingBar)
-        private val barraProgreso = view.findViewById<ProgressBar>(R.id.progresoLibro)
-        private val textoProgreso = view.findViewById<TextView>(R.id.textoProgreso)
+        private val portada: ImageView = itemView.findViewById(R.id.portadaLibro)
+        private val titulo: TextView = itemView.findViewById(R.id.tituloLibro)
+        private val autor: TextView = itemView.findViewById(R.id.autorLibro)
+        private val rating: RatingBar = itemView.findViewById(R.id.ratingBar)
+        private val progreso: ProgressBar = itemView.findViewById(R.id.progresoLibro)
+        private val textoProgreso: TextView = itemView.findViewById(R.id.textoProgreso)
 
         fun bind(libro: Libro) {
+
+            // Título y autor
             titulo.text = libro.titulo
             autor.text = libro.autor
 
-            // Si en algún momento agregas rating, aquí lo cargas
             rating.rating = 0f
 
-            // Progress = paginas leídas
-            val actual = libro.paginaActual ?: 0
-            val total = libro.paginas ?: 0
+            // Portada (si existe)
+            if (!libro.portadaUri.isNullOrEmpty()) {
+                Glide.with(itemView.context)
+                    .load(libro.portadaUri)
+                    .into(portada)
+            }
 
-            barraProgreso.max = total
-            barraProgreso.progress = actual
+            // Progreso del libro
+            val paginaActual = libro.paginaActual ?: 0
+            val paginasTotales = libro.paginas ?: 1
 
-            textoProgreso.text = "Página $actual de $total"
+            progreso.max = paginasTotales
+            progreso.progress = paginaActual
 
-            // Imagen de portada (placeholder si no hay URI)
-            // portada.setImageResource(R.drawable.portadaLibro)
+            textoProgreso.text = "Página $paginaActual de $paginasTotales"
         }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Libro>() {
-        override fun areItemsTheSame(oldItem: Libro, newItem: Libro): Boolean =
-            oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: Libro, newItem: Libro): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-        override fun areContentsTheSame(oldItem: Libro, newItem: Libro): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(oldItem: Libro, newItem: Libro): Boolean {
+            return oldItem == newItem
+        }
     }
 }

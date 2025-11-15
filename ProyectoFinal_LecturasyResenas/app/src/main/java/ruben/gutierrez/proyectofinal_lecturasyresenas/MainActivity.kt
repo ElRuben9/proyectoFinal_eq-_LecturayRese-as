@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import ruben.gutierrez.proyectofinal_lecturasyresenas.LibroAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,26 +21,17 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // -------------------------
-        // RecyclerView
-        // -------------------------
         val recycler = findViewById<RecyclerView>(R.id.recyclerViewLibros)
         adapter = LibroAdapter()
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
-        // -------------------------
-        // ViewModel
-        // -------------------------
         viewModel = ViewModelProvider(this)[LibroViewModel::class.java]
 
         viewModel.libros.observe(this) { lista ->
             adapter.submitList(lista)
         }
 
-        // -------------------------
-        // Bottom Navigation
-        // -------------------------
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.selectedItemId = R.id.nav_biblioteca
 
@@ -57,16 +47,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // -------------------------
-        // Botón Agregar Libro
-        // -------------------------
         findViewById<FloatingActionButton>(R.id.fab_agregar_libro).setOnClickListener {
             startActivity(Intent(this, AgregarLibroActivity::class.java))
         }
 
-        // -------------------------
-        // Botón de Perfil
-        // -------------------------
         findViewById<ImageView>(R.id.boton_perfil).setOnClickListener {
             startActivity(Intent(this, PerfilActivity::class.java))
         }
