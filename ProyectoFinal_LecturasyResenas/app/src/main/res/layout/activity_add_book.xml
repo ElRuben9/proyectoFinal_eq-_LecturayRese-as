@@ -124,6 +124,7 @@
             <TextView android:id="@+id/txtTemaLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tema" android:textStyle="bold" />
 
             <Spinner
+                android:entries="@array/temas_array"
                 android:id="@+id/spnTema"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,6 +138,7 @@
             <TextView android:id="@+id/txtGeneroLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Género" android:textStyle="bold" />
 
             <Spinner
+                android:entries="@array/generos_array"
                 android:id="@+id/spnGenero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -39,14 +39,19 @@ android {
 }
 
 dependencies {
+    // Cloudinary
+    implementation ("com.cloudinary:cloudinary-android:2.5.0")
 
 
+// Glide para cargar imágenes
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    kapt ("com.github.bumptech.glide:compiler:4.15.1")
 
         implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
         implementation("com.google.firebase:firebase-auth")
         implementation("com.google.firebase:firebase-database")
         implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")
+        implementation("com.google.firebase:firebase-storage")
 
 
         // AndroidX & Material
@@ -56,6 +61,8 @@ dependencies {
         implementation(libs.androidx.activity)
         implementation(libs.androidx.constraintlayout)
 
+        //  Picasso
+        implementation("com.squareup.picasso:picasso:2.71828")
         // ViewModel + LiveData
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
         implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")

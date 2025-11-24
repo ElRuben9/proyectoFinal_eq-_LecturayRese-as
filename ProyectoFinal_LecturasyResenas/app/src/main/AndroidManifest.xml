@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,6 +30,7 @@
 
         <activity android:name=".AgregarLibroActivity" />
         <activity android:name=".PerfilActivity" />
+        <activity android:name=".DetalleLibroActivity"/>
 
         <activity
             android:name=".EstadisticasActivity"
@@ -38,5 +40,7 @@
             android:exported="false" />
 
     </application>
+
+
 
 </manifest>

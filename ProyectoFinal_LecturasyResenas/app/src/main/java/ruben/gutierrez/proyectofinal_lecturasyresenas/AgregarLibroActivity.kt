@@ -7,12 +7,15 @@ import android.os.Bundle
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
 
 class AgregarLibroActivity : AppCompatActivity() {
+
 
     private var portadaUri: Uri? = null
 
@@ -47,6 +50,12 @@ class AgregarLibroActivity : AppCompatActivity() {
             seleccionarImagen.launch(intent)
         }
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_add_book)
+        toolbar.setNavigationOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+
         btnGuardar.setOnClickListener {
 
             if (titulo.text.isBlank() || autor.text.isBlank()) {
@@ -64,13 +73,12 @@ class AgregarLibroActivity : AppCompatActivity() {
                 paginas = paginas.text.toString().toIntOrNull(),
                 sinopsis = sinopsis.text.toString(),
                 paginaActual = paginaActual.text.toString().toIntOrNull(),
-                portadaUri = null,
+                portadaUri = null, // Se pondrá después
                 userId = uid
             )
 
-            // Si hay imagen, primero se sube a Storage
             if (portadaUri != null) {
-                subirImagenYGuardarLibro(libro)
+                subirImagenACloudinary(libro)
             } else {
                 guardarLibroEnFirestore(libro)
             }
@@ -79,32 +87,62 @@ class AgregarLibroActivity : AppCompatActivity() {
         btnCancelar.setOnClickListener { finish() }
     }
 
-    private fun subirImagenYGuardarLibro(libro: Libro) {
-        val ref = FirebaseStorage.getInstance().reference
-            .child("portadas/${System.currentTimeMillis()}_${libro.userId}.jpg")
+    private fun subirImagenACloudinary(libro: Libro) {
 
-        ref.putFile(portadaUri!!)
-            .continueWithTask { task ->
-                if (!task.isSuccessful) throw task.exception ?: Exception("Error subiendo imagen")
-                ref.downloadUrl
-            }
-            .addOnSuccessListener { downloadUrl ->
-                val libroConImagen = libro.copy(portadaUri = downloadUrl.toString())
-                guardarLibroEnFirestore(libroConImagen)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error subiendo la imagen", Toast.LENGTH_SHORT).show()
-            }
+        val uri = portadaUri ?: return
+
+        Toast.makeText(this, "Subiendo imagen...", Toast.LENGTH_SHORT).show()
+
+        MediaManager.get().upload(uri)
+            .unsigned("libros_preset")   //
+            .option("folder", "libros/") //
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String?) {
+                    // mostrar progress bar
+                }
+
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                    // actualizar progreso
+                }
+
+                override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
+                    val url = resultData["secure_url"] as? String
+                    if (url != null) {
+                        val libroConImagen = libro.copy(portadaUri = url)
+                        guardarLibroEnFirestore(libroConImagen)
+                    }
+                }
+
+                override fun onError(requestId: String?, error: ErrorInfo?) {
+                    Toast.makeText(
+                        this@AgregarLibroActivity,
+                        "Error subiendo imagen: ${error?.description}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                    Toast.makeText(
+                        this@AgregarLibroActivity,
+                        "Error temporal, se reintentará: ${error?.description}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+            .dispatch()
     }
 
     private fun guardarLibroEnFirestore(libro: Libro) {
         val firestore = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-
-        firestore.collection("usuarios")
+        val ref = firestore.collection("usuarios")
             .document(userId)
             .collection("libros")
-            .add(libro) // Firestore generará un ID automáticamente
+            .document() // genera id antes de guardar
+
+        val libroConId = libro.copy(id = ref.id)
+
+        ref.set(libroConId)
             .addOnSuccessListener {
                 Toast.makeText(this, "Libro guardado correctamente", Toast.LENGTH_SHORT).show()
                 finish()
@@ -112,6 +150,6 @@ class AgregarLibroActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Error guardando el libro", Toast.LENGTH_SHORT).show()
             }
-    }
 
+    }
 }

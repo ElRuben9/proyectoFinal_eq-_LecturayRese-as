@@ -13,19 +13,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
 
-class LibroAdapter : ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallback()) {
+class LibroAdapter(
+    private val onClick: (Libro) -> Unit
+) : ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LibroViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_libro, parent, false)
-        return LibroViewHolder(view)
+        return LibroViewHolder(view, onClick)
     }
 
     override fun onBindViewHolder(holder: LibroViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class LibroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class LibroViewHolder(itemView: View, val onClick: (Libro) -> Unit)
+        : RecyclerView.ViewHolder(itemView) {
 
         private val portada: ImageView = itemView.findViewById(R.id.portadaLibro)
         private val titulo: TextView = itemView.findViewById(R.id.tituloLibro)
@@ -36,29 +39,28 @@ class LibroAdapter : ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallba
 
         fun bind(libro: Libro) {
 
-            // Título y autor
             titulo.text = libro.titulo
             autor.text = libro.autor
 
             rating.rating = 0f
 
-            // Portada (si existe)
             if (!libro.portadaUri.isNullOrEmpty()) {
                 Glide.with(itemView.context)
                     .load(libro.portadaUri)
                     .into(portada)
             }
 
-            // Progreso del libro
             val paginaActual = libro.paginaActual ?: 0
             val paginasTotales = libro.paginas ?: 1
 
             progreso.max = paginasTotales
             progreso.progress = paginaActual
-
             textoProgreso.text = "Página $paginaActual de $paginasTotales"
+
+            itemView.setOnClickListener { onClick(libro) }
         }
     }
+}
 
     class DiffCallback : DiffUtil.ItemCallback<Libro>() {
         override fun areItemsTheSame(oldItem: Libro, newItem: Libro): Boolean {
@@ -69,4 +71,4 @@ class LibroAdapter : ListAdapter<Libro, LibroAdapter.LibroViewHolder>(DiffCallba
             return oldItem == newItem
         }
     }
-}
+

@@ -22,7 +22,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val recycler = findViewById<RecyclerView>(R.id.recyclerViewLibros)
-        adapter = LibroAdapter()
+        adapter = LibroAdapter { libro ->
+            val intent = Intent(this, DetalleLibroActivity::class.java)
+            intent.putExtra("idLibro", libro.id)
+            startActivity(intent)
+        }
+
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
