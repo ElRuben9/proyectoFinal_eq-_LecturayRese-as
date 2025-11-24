@@ -110,7 +110,7 @@
 
 
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Categoría" android:textStyle="bold" />
+            <TextView  android:id="@+id/categoria" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Categoría" android:textStyle="bold" />
             <Spinner
                 android:id="@+id/spnCategoria"
                 android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                 android:minHeight="48dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 tools:visibility="visible" />
 
             <TextView android:id="@+id/txtGeneroLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Género" android:textStyle="bold" />
@@ -146,7 +146,7 @@
                 android:minHeight="48dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="16dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 tools:visibility="visible" />
 
             <EditText

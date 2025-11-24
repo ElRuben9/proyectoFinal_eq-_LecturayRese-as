@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -85,7 +86,69 @@ class AgregarLibroActivity : AppCompatActivity() {
         }
 
         btnCancelar.setOnClickListener { finish() }
+
+
+
+
+
+
+        categoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val categoriaSeleccionada = categoria.selectedItem.toString()
+
+                val txtTemaLabel = findViewById<TextView>(R.id.txtTemaLabel)
+                val txtGeneroLabel = findViewById<TextView>(R.id.txtGeneroLabel)
+                val txtCategoria = findViewById<TextView>(R.id.categoria)
+
+
+                when (categoriaSeleccionada) {
+
+                    "Selecciona una categoría" -> {
+                        // no muestra nada
+                        txtTemaLabel.visibility = View.GONE
+                        tema.visibility = View.GONE
+
+
+                        txtGeneroLabel.visibility = View.GONE
+                        genero.visibility = View.GONE
+                    }
+
+
+                    "Académico" -> {
+                        // este muestra el tema y quita el genero
+                        txtTemaLabel.visibility = View.VISIBLE
+                        tema.visibility = View.VISIBLE
+
+
+                        txtGeneroLabel.visibility = View.GONE
+                        genero.visibility = View.GONE
+                    }
+
+                    "Ficción", "No ficción" -> {
+                        // este muestra el genero y quita el tema
+                        txtGeneroLabel.visibility = View.VISIBLE
+                        genero.visibility = View.VISIBLE
+
+
+                        txtTemaLabel.visibility = View.GONE
+                        tema.visibility = View.GONE
+                    }
+
+
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+
     }
+
 
     private fun subirImagenACloudinary(libro: Libro) {
 

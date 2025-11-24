@@ -27,6 +27,8 @@ class DetalleLibroActivity : AppCompatActivity() {
     private lateinit var tvIsbn: TextView
     private lateinit var tvResumen: TextView
 
+    private lateinit var tvTema: TextView
+
     private lateinit var ratingBar: RatingBar
     private lateinit var tvValorRating: TextView
 
@@ -42,10 +44,9 @@ class DetalleLibroActivity : AppCompatActivity() {
         tvCategoria = findViewById(R.id.tvCategoria)
         tvGenero = findViewById(R.id.tvGenero)
         tvSinopsis = findViewById(R.id.tvSinopsis)
-        tvEditorial = findViewById(R.id.tvEditorial)
-        tvAno = findViewById(R.id.tvAno)
         tvIsbn = findViewById(R.id.tvIsbn)
         tvResumen = findViewById(R.id.tvResumen)
+        tvTema  = findViewById(R.id.tvTema)
 
         layoutProgreso = findViewById(R.id.layoutProgreso)
         layoutResumen = findViewById(R.id.layoutResumen)
@@ -86,11 +87,10 @@ class DetalleLibroActivity : AppCompatActivity() {
         tvTitulo.text = libro.titulo
         tvAutor.text = libro.autor
         tvCategoria.text = libro.categoria
-        tvGenero.text = libro.genero ?: "Sin género"
+        tvGenero.text = "Género: ${libro.genero ?: "N/A"}"
+        tvTema.text = "Tema: ${libro.tema ?: "N/A"}"
         tvSinopsis.text = libro.sinopsis ?: "Sin sinopsis"
         tvIsbn.text = libro.isbn ?: "Sin ISBN"
-        tvEditorial.text = "Editorial: ${libro.editorial ?: "Desconocida"}"
-        tvAno.text = "Año: ${libro.anio ?: "N/A"}"
         tvResumen.text = libro.resumen ?: "Sin resumen"
 
         // Si tiene portada

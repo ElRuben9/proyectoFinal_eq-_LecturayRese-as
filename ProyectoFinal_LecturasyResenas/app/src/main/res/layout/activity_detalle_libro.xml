@@ -78,6 +78,13 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <TextView
+            android:text="Estado de lectura"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            />
 
         <ProgressBar
             android:id="@+id/progresoLibro"
@@ -167,22 +174,18 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/tvEditorial"
-            android:text="Editorial: Plaza and Janés"
+            android:id="@+id/tvTema"
+            android:text="Tema: Cálculo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/tvAno"
-            android:text="Año: 2007"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvIsbn"
             android:text="ISBN: 978-8401377032"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
 
         <!-- Botón Editar -->
         <Button
