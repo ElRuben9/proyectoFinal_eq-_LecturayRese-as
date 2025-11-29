@@ -11,11 +11,14 @@
     <string-array name="generos_array">
         <item>Selecciona un género</item>
         <item>Fantasía Épica</item>
-        <item>Thriller</item>
         <item>Ciencia Ficción</item>
-        <item>Biografía</item>
-        <item>Autoayuda</item>
-        <item>Historia</item>
+        <item>Thriller</item>
+        <item>Romántico</item>
+        <item>Misterio</item>
+        <item>Juvenil</item>
+        <item>Horror</item>
+        <item>Poesía</item>
+        <item>Drama</item>
     </string-array>
 
     <string-array name="temas_array">
@@ -24,6 +27,12 @@
         <item>Cálculo</item>
         <item>Economía</item>
         <item>Derecho</item>
+        <item>Psicología</item>
+        <item>Sociología</item>
+        <item>Física</item>
+        <item>Marketing</item>
+        <item>Diseño</item>
     </string-array>
+
 
 </resources>
