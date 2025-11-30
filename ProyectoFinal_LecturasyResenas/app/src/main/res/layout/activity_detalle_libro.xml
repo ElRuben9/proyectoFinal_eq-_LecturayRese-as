@@ -61,7 +61,9 @@
                 android:rating="4.0"
                 android:isIndicator="true"
             android:layout_width="wrap_content"
-            android:layout_height="45dp" />
+            android:layout_height="45dp"
+                android:progressTint="@color/darkBlue"
+                />
 
             <TextView
                 android:id="@+id/tvValorRating"
@@ -80,7 +82,7 @@
             android:textStyle="bold"
             />
 
-        
+
 
         <ProgressBar
             android:id="@+id/progresoLibro"
@@ -89,7 +91,9 @@
             android:layout_height="8dp"
             android:layout_marginTop="8dp"
             android:max="100"
-            android:progress="100" />
+            android:progress="100"
+            android:progressTint="@color/darkBlue"
+            />
 
         <LinearLayout
             android:id="@+id/layoutProgreso"
@@ -167,7 +171,7 @@
 
             <Button
                 android:id="@+id/btnGuardarFinalizacion"
-                android:text="Guardar reseña"
+                android:text="Guardar"
                 android:backgroundTint="@color/darkBlue"
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"

@@ -28,6 +28,7 @@
 
         </activity>
 
+        <activity android:name=".EditarLibroActivity" />
         <activity android:name=".AgregarLibroActivity" />
         <activity android:name=".PerfilActivity" />
         <activity android:name=".DetalleLibroActivity"/>

@@ -1,7 +1,9 @@
 package ruben.gutierrez.proyectofinal_lecturasyresenas.model
 
+import java.io.Serializable
+
 data class Libro(
-    val id: String? = null,
+    var id: String? = null,
     val isbn: String? = null,
     val titulo: String = "",
     val autor: String = "",
@@ -16,4 +18,6 @@ data class Libro(
     val resumen: String? = null,
     val userId: String = "",
     val estadoLectura: String = "",
-)
+) : Serializable
+
+

@@ -1,5 +1,6 @@
 package ruben.gutierrez.proyectofinal_lecturasyresenas
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -42,6 +43,9 @@ class DetalleLibroActivity : AppCompatActivity() {
 
     private var libroActual: Libro? = null
     private var idLibro: String? = null
+
+    private lateinit var libro: Libro
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,9 +108,13 @@ class DetalleLibroActivity : AppCompatActivity() {
         }
 
         btnEditarDatos.setOnClickListener {
-            Toast.makeText(this, "Aquí abriremos Edición de libro", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, EditarLibroActivity::class.java)
+            intent.putExtra("libro", libroActual)
+            startActivityForResult(intent, 300)
         }
+
     }
+
 
 
     // carga los datos del libro
@@ -253,6 +261,8 @@ class DetalleLibroActivity : AppCompatActivity() {
         val calificacion = ratingFinal.rating
         val resumenTxt = edtResumenFinal.text.toString()
 
+        val paginasTotales = libroActual?.paginas ?: 0
+
         FirebaseFirestore.getInstance()
             .collection("usuarios")
             .document(userId)
@@ -262,11 +272,23 @@ class DetalleLibroActivity : AppCompatActivity() {
                 mapOf(
                     "estadoLectura" to "Terminado",
                     "rating" to calificacion,
-                    "resumen" to resumenTxt
+                    "resumen" to resumenTxt,
+                    "paginaActual" to paginasTotales
                 )
             ).addOnSuccessListener {
                 Toast.makeText(this, "Libro finalizado", Toast.LENGTH_SHORT).show()
                 cargarLibroDesdeFirestore(idLibro!!)
             }
     }
+
+
+    //ESTO HACE QUE CUANDO TERMINES DE EDITAR UN LIBRO EN EL EDITARLIBROACTIVITY SE REFRESQUE ESTA PANTALLA AUTOMATICAMENTE
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 300 && resultCode == RESULT_OK) {
+            cargarLibroDesdeFirestore(idLibro!!)
+        }
+    }
+
 }

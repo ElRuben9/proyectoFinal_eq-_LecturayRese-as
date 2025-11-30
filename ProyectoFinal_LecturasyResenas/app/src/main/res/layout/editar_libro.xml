@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:paddingTop="35dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgPortadaEditar"
+            android:layout_width="150dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:layout_gravity="center"
+            android:text="Presiona la imagen para seleccionar una"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:text="Título"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/etTituloEditar"
+            android:hint="Título"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"/>
+
+        <TextView
+            android:text="Autor"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/etAutorEditar"
+            android:hint="Autor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp" />
+
+        <TextView
+            android:text="ISBN"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/etIsbnEditar"
+            android:hint="ISBN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:inputType="number" />
+
+        <TextView
+            android:text="Sinopsis"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/etSinopsisEditar"
+            android:hint="Sinopsis"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="top"
+            android:layout_marginTop="1dp"
+            android:inputType="textMultiLine" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/etPaginasEditar"-->
+<!--            android:hint="Número total de páginas"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:inputType="number" />-->
+
+        <Button
+            android:id="@+id/btnGuardarCambios"
+            android:text="Guardar cambios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/darkBlue"
+
+            />
+
+    </LinearLayout>
+
+</ScrollView>
