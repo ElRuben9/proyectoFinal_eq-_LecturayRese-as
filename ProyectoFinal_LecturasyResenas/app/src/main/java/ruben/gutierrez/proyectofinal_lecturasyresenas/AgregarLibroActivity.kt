@@ -64,17 +64,33 @@ class AgregarLibroActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val categoriaSeleccionada = categoria.selectedItem.toString()
+
+// Esto es para normalizar
+// Si la categoria selecionada es academico, genero = null
+            val temaFinal = if (categoriaSeleccionada == "Académico") {
+                tema.selectedItem?.toString()
+            } else {
+                null
+            }
+// Si la categoria seleccionada es Ficcion o No Ficcion, tema = null.
+            val generoFinal = if (categoriaSeleccionada == "Ficción" || categoriaSeleccionada == "No ficción") {
+                genero.selectedItem?.toString()
+            } else {
+                null
+            }
+
             val libro = Libro(
                 isbn = isbn.text.toString().ifBlank { null },
                 titulo = titulo.text.toString(),
                 autor = autor.text.toString(),
-                categoria = categoria.selectedItem.toString(),
-                tema = tema.selectedItem?.toString(),
-                genero = genero.selectedItem?.toString(),
+                categoria = categoriaSeleccionada,
+                tema = temaFinal,
+                genero = generoFinal,
                 paginas = paginas.text.toString().toIntOrNull(),
                 sinopsis = sinopsis.text.toString(),
                 paginaActual = paginaActual.text.toString().toIntOrNull(),
-                portadaUri = null, // Se pondrá después
+                portadaUri = null,
                 userId = uid
             )
 
