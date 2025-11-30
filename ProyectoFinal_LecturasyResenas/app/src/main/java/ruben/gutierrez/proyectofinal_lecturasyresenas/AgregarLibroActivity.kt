@@ -46,6 +46,39 @@ class AgregarLibroActivity : AppCompatActivity() {
         val btnCancelar = findViewById<Button>(R.id.btnCancelar)
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        //ESTO ES PARA LO DEL ESTADO DE LECTURAAA
+        val estadoLectura = findViewById<Spinner>(R.id.spnEstadoLectura)
+        val resumen = findViewById<EditText>(R.id.edtResumen)
+        val rating = findViewById<RatingBar>(R.id.ratingBar)
+
+        estadoLectura.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                when (estadoLectura.selectedItem.toString()) {
+
+                    "Por leer" -> {
+                        paginaActual.visibility = View.GONE
+                        resumen.visibility = View.GONE
+                        rating.visibility = View.GONE
+                    }
+
+                    "En curso" -> {
+                        paginaActual.visibility = View.VISIBLE
+                        resumen.visibility = View.GONE
+                        rating.visibility = View.GONE
+                    }
+
+                    "Terminado" -> {
+                        paginaActual.visibility = View.GONE
+                        resumen.visibility = View.VISIBLE
+                        rating.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+
         btnSeleccionarImg.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             seleccionarImagen.launch(intent)
@@ -80,6 +113,30 @@ class AgregarLibroActivity : AppCompatActivity() {
                 null
             }
 
+            //obtiene el estado del spinner
+            val estado = estadoLectura.selectedItem.toString()
+
+            val paginasTotales = paginas.text.toString().toIntOrNull() ?: 0
+
+// aqui calcula la pagina actual segun el estado
+            val paginaActualFinal = when (estado) {
+
+                "Por leer" -> 0
+
+                "En curso" ->
+                    paginaActual.text.toString().toIntOrNull()?.coerceAtMost(paginasTotales) ?: 0
+
+                "Terminado" ->
+                    paginasTotales  // se marca como completado
+                else -> 0
+            }
+
+            val resumenFinal = if (estado == "Terminado") resumen.text.toString() else null
+            val ratingFinal = if (estado == "Terminado") rating.rating else null
+
+
+
+
             val libro = Libro(
                 isbn = isbn.text.toString().ifBlank { null },
                 titulo = titulo.text.toString(),
@@ -89,7 +146,12 @@ class AgregarLibroActivity : AppCompatActivity() {
                 genero = generoFinal,
                 paginas = paginas.text.toString().toIntOrNull(),
                 sinopsis = sinopsis.text.toString(),
-                paginaActual = paginaActual.text.toString().toIntOrNull(),
+
+                estadoLectura = estado,
+                paginaActual = paginaActualFinal,
+                resumen = resumenFinal,
+                rating = ratingFinal,
+
                 portadaUri = null,
                 userId = uid
             )
@@ -99,11 +161,10 @@ class AgregarLibroActivity : AppCompatActivity() {
             } else {
                 guardarLibroEnFirestore(libro)
             }
+
         }
 
         btnCancelar.setOnClickListener { finish() }
-
-
 
 
 

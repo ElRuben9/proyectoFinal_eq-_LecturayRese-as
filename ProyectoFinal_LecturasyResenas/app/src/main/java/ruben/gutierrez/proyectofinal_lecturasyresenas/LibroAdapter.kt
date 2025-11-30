@@ -42,18 +42,25 @@ class LibroAdapter(
             titulo.text = libro.titulo
             autor.text = libro.autor
 
-            rating.rating = 0f
+            //para que muestre el rating realll
+            rating.rating = libro.rating ?: 0f
 
+            //para que muestre la portada si es que tiene
             if (!libro.portadaUri.isNullOrEmpty()) {
                 Glide.with(itemView.context)
                     .load(libro.portadaUri)
                     .into(portada)
             }
 
-            val paginaActual = libro.paginaActual ?: 0
+            //para el progreso de la lectura
             val paginasTotales = libro.paginas ?: 1
+            val paginaActual = when {
+                libro.paginaActual != null -> libro.paginaActual!!
+                libro.estadoLectura == "Terminado" -> paginasTotales //  si esta terminado va mostrar completo
+                else -> 0
+            }
 
-            progreso.max = paginasTotales
+                progreso.max = paginasTotales
             progreso.progress = paginaActual
             textoProgreso.text = "Página $paginaActual de $paginasTotales"
 

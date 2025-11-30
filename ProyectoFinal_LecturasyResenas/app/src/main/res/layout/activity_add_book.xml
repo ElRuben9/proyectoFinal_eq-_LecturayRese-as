@@ -172,6 +172,7 @@
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/lightGray" android:layout_marginVertical="16dp" />
 
             <TextView
+                android:id="@+id/txtEstadoLecturaLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Estado de lectura"
@@ -179,14 +180,48 @@
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
 
+            <Spinner
+                android:id="@+id/spnEstadoLectura"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/estados_lectura_array"
+                android:spinnerMode="dropdown"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Para el estado "en curso" -->
             <EditText
                 android:id="@+id/edtPaginaActual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Página actual (dejar en 0 si es 'Por leer')"
+                android:hint="Página actual"
                 android:inputType="number"
                 android:padding="12dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+
+            <!-- Para el estado "terminado" -->
+            <EditText
+                android:id="@+id/edtResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Resumen (opcional)"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:gravity="top|start"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
+
+            <!-- Y este para el "rating" -->
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="1"
+                android:rating="0"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </ScrollView>

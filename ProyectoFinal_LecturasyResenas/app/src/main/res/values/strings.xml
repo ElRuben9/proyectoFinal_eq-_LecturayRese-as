@@ -34,5 +34,11 @@
         <item>Diseño</item>
     </string-array>
 
+    <string-array name="estados_lectura_array">
+        <item>Por leer</item>
+        <item>En curso</item>
+        <item>Terminado</item>
+    </string-array>
+
 
 </resources>

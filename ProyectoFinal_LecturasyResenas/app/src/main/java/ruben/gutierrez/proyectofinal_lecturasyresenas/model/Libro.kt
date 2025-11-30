@@ -12,9 +12,8 @@ data class Libro(
     val sinopsis: String? = null,
     val paginaActual: Int? = null,
     val portadaUri: String? = null,
-    val editorial: String? = null,
-    val anio: Int? = null,
     val rating: Float? = null,
     val resumen: String? = null,
-    val userId: String = ""
+    val userId: String = "",
+    val estadoLectura: String = "",
 )

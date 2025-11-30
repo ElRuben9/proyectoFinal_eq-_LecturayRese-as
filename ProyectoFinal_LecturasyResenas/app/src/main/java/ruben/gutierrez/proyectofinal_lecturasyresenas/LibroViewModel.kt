@@ -44,8 +44,6 @@ class LibroViewModel : ViewModel() {
                         sinopsis = l.sinopsis,
                         paginaActual = l.paginaActual,
                         portadaUri = l.portadaUri,
-                        editorial = l.editorial,
-                        anio = l.anio,
                         rating = l.rating,
                         resumen = l.resumen,
                         userId = l.userId
