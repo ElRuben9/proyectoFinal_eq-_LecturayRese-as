@@ -80,13 +80,7 @@
             android:textStyle="bold"
             />
 
-
-        <TextView
-            android:text="Estado de lectura"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"
-            />
+        
 
         <ProgressBar
             android:id="@+id/progresoLibro"
