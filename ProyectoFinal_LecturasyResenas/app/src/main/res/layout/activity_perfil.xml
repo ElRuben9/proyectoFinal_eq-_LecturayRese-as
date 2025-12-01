@@ -5,11 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:padding="16dp"
-    android:id="@+id/PerfilActivity"
-    >
-
-
-
+    android:id="@+id/PerfilActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,9 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/arrow_back"
             android:textAlignment="center"
-            app:titleTextColor="@color/black"
-             />
-
+            app:titleTextColor="@color/black" />
 
         <!-- Encabezado -->
         <TextView
@@ -143,6 +137,7 @@
             android:orientation="vertical"
             android:layout_marginTop="32dp">
 
+            <!-- NOMBRE -->
             <TextView
                 android:text="Nombre completo"
                 android:layout_width="match_parent"
@@ -150,38 +145,108 @@
                 android:textSize="14sp"
                 android:textColor="#777" />
 
-
-            <LinearLayout
+            <!-- Texto normal -->
+            <TextView
+                android:id="@+id/tvNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="4dp">
+                android:text="María González López"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
 
-                <TextView
-                    android:id="@+id/tvNombre"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="María González López"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+            <!-- Campo editable oculto -->
+            <EditText
+                android:id="@+id/edtNombreEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre completo"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/tvEditarNombre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Editar"
-                    android:textColor="#007AFF"
-                    android:textSize="14sp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp" />
-            </LinearLayout>
+
+            <!-- FECHA DE NACIMIENTO -->
+            <TextView
+                android:text="Fecha de nacimiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#777"
+                android:layout_marginTop="16dp" />
 
             <TextView
+                android:id="@+id/tvFechaNacimiento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="01/01/1990"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtFechaEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fecha de nacimiento"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+
+            <!-- PROFESIÓN -->
+            <TextView
+                android:text="Profesión"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#777"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvProfesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ingeniera de Software"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtProfesionEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Profesión"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+
+            <!-- GÉNERO -->
+            <TextView
+                android:text="Género"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#777"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvGenero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Femenino"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Spinner editable -->
+            <Spinner
+                android:id="@+id/spinnerGenero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+
+            <!-- CORREO -->
+            <TextView
                 android:text="Correo electrónico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="#777"
                 android:layout_marginTop="16dp" />
@@ -200,7 +265,10 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:textColor="#AAA" />
+
+
         </LinearLayout>
+
 
         <!-- Botones -->
         <Button
@@ -213,6 +281,17 @@
             android:textColor="#FFFFFF" />
 
         <Button
+            android:id="@+id/btnGuardarCambios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar cambios"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/darkBlue"
+            android:textColor="#FFFFFF"
+            android:visibility="gone" />
+
+
+        <Button
             android:id="@+id/btnCambiarContrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -220,6 +299,7 @@
             android:layout_marginTop="8dp"
             android:backgroundTint="#EAEAEA"
             android:textColor="#000000" />
+
 
     </LinearLayout>
 </ScrollView>

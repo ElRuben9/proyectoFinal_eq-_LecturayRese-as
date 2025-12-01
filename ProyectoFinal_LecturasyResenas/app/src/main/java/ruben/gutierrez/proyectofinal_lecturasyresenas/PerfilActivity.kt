@@ -1,6 +1,8 @@
 package ruben.gutierrez.proyectofinal_lecturasyresenas
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +15,7 @@ import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.callback.ErrorInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.util.Calendar
 
 class PerfilActivity : AppCompatActivity() {
 
@@ -43,13 +46,41 @@ class PerfilActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
 
+        // Referencias UI
         val tvNombre = findViewById<TextView>(R.id.tvNombre)
         val tvCorreo = findViewById<TextView>(R.id.tvCorreo)
+        val tvFecha = findViewById<TextView>(R.id.tvFechaNacimiento)
+        val tvProfesion = findViewById<TextView>(R.id.tvProfesion)
+        val tvGenero = findViewById<TextView>(R.id.tvGenero)
+
+        val edtNombre = findViewById<EditText>(R.id.edtNombreEdit)
+        val edtFecha = findViewById<EditText>(R.id.edtFechaEdit)
+        val edtProfesion = findViewById<EditText>(R.id.edtProfesionEdit)
+        val spinnerGenero = findViewById<Spinner>(R.id.spinnerGenero)
+
+        val btnEditar = findViewById<Button>(R.id.btnEditar)
+        val btnGuardar = findViewById<Button>(R.id.btnGuardarCambios)
+        val btnCambiarContrasena = findViewById<Button>(R.id.btnCambiarContrasena)
+
         val imgPerfil = findViewById<ImageView>(R.id.imgPerfil)
         val tvCambiarFoto = findViewById<TextView>(R.id.tvCambiarFoto)
 
+        val generos = resources.getStringArray(R.array.generos_usuario)
+        val adaptadorGenero = ArrayAdapter(this, android.R.layout.simple_spinner_item, generos)
+        adaptadorGenero.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerGenero.adapter = adaptadorGenero
+
+
         val userId = auth.currentUser?.uid ?: return
         val userRef = database.reference.child("Usuarios").child(userId)
+
+        // -----------------------------
+        // CARGA DE DATOS INICIALES
+        // -----------------------------
+
+        findViewById<Button>(R.id.btnCambiarContrasena).setOnClickListener {
+            startActivity(Intent(this, CambiarPassword::class.java))
+        }
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -57,10 +88,25 @@ class PerfilActivity : AppCompatActivity() {
                 if (snapshot.exists()) {
                     val nombre = snapshot.child("nombre").value.toString()
                     val correo = snapshot.child("correo").value.toString()
+                    val fecha = snapshot.child("fechaNacimiento").value.toString()
+                    val profesion = snapshot.child("profesion").value.toString()
+                    val genero = snapshot.child("genero").value.toString()
                     val fotoUrl = snapshot.child("fotoPerfil").value.toString()
 
+                    // Modo lectura
                     tvNombre.text = nombre
                     tvCorreo.text = correo
+                    tvFecha.text = fecha
+                    tvProfesion.text = profesion
+                    tvGenero.text = genero
+
+                    // Modo edición
+                    edtNombre.setText(nombre)
+                    edtFecha.setText(fecha)
+                    edtProfesion.setText(profesion)
+
+                    val generos = resources.getStringArray(R.array.generos_usuario)
+                    spinnerGenero.setSelection(generos.indexOf(genero))
 
                     if (fotoUrl.isNotEmpty()) {
                         Glide.with(this@PerfilActivity)
@@ -78,15 +124,85 @@ class PerfilActivity : AppCompatActivity() {
             }
         })
 
+
+        // -----------------------------
+        // CAMBIAR FOTO
+        // -----------------------------
         tvCambiarFoto.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             seleccionarImagen.launch(intent)
         }
 
-        val tvEditarNombre = findViewById<TextView>(R.id.tvEditarNombre)
-        tvEditarNombre.setOnClickListener { editarNombre() }
+        // -----------------------------
+        // DATE PICKER PARA FECHA
+        // -----------------------------
+        edtFecha.setOnClickListener {
+            val cal = Calendar.getInstance()
+            val dp = DatePickerDialog(
+                this,
+                { _, y, m, d ->
+                    edtFecha.setText("%02d/%02d/%04d".format(d, m + 1, y))
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            )
+            dp.datePicker.maxDate = System.currentTimeMillis()
+            dp.show()
+        }
+
+        // -----------------------------
+        // BOTÓN EDITAR → activa modo edición
+        // -----------------------------
+        btnEditar.setOnClickListener {
+            cambiarModoEdicion(true)
+        }
+
+        // -----------------------------
+        // BOTÓN GUARDAR CAMBIOS
+        // -----------------------------
+        btnGuardar.setOnClickListener {
+
+            val nuevoNombre = edtNombre.text.toString().trim()
+            val nuevaFecha = edtFecha.text.toString().trim()
+            val nuevaProfesion = edtProfesion.text.toString().trim()
+            val nuevoGenero = spinnerGenero.selectedItem.toString()
+
+            if (nuevoNombre.isEmpty() || nuevaFecha.isEmpty() || nuevaProfesion.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val updates = mapOf(
+                "nombre" to nuevoNombre,
+                "fechaNacimiento" to nuevaFecha,
+                "profesion" to nuevaProfesion,
+                "genero" to nuevoGenero
+            )
+
+            userRef.updateChildren(updates)
+                .addOnSuccessListener {
+
+                    // Actualizar modo lectura
+                    tvNombre.text = nuevoNombre
+                    tvFecha.text = nuevaFecha
+                    tvProfesion.text = nuevaProfesion
+                    tvGenero.text = nuevoGenero
+
+                    cambiarModoEdicion(false)
+
+                    Toast.makeText(this, "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                }
+        }
+
     }
 
+    // -----------------------------
+    // SUBIR FOTO A CLOUDINARY
+    // -----------------------------
     private fun subirImagenACloudinary() {
         val uri = nuevaImagenUri ?: return
 
@@ -114,63 +230,68 @@ class PerfilActivity : AppCompatActivity() {
                     ).show()
                 }
 
-                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                    Toast.makeText(
-                        this@PerfilActivity,
-                        "Reprogramado por Cloudinary: ${error?.description}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
             })
             .dispatch()
     }
 
     private fun guardarUrlEnFirebase(url: String) {
         val userId = auth.currentUser?.uid ?: return
-        val userRef = database.reference.child("Usuarios").child(userId)
-
-        userRef.child("fotoPerfil").setValue(url)
+        database.reference.child("Usuarios").child(userId).child("fotoPerfil")
+            .setValue(url)
             .addOnSuccessListener {
                 Toast.makeText(this, "Foto actualizada", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener {
+            }
+            .addOnFailureListener {
                 Toast.makeText(this, "Error guardando URL", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun editarNombre() {
+    // -----------------------------
+    // CONTROL DE MODO EDICIÓN
+    // -----------------------------
+    private fun cambiarModoEdicion(editar: Boolean) {
 
-        val builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle("Editar nombre")
+        val tvNombre = findViewById<TextView>(R.id.tvNombre)
+        val tvFecha = findViewById<TextView>(R.id.tvFechaNacimiento)
+        val tvProfesion = findViewById<TextView>(R.id.tvProfesion)
+        val tvGenero = findViewById<TextView>(R.id.tvGenero)
 
-        val input = EditText(this)
-        input.hint = "Nuevo nombre"
-        input.setPadding(40, 30, 40, 30)
+        val edtNombre = findViewById<EditText>(R.id.edtNombreEdit)
+        val edtFecha = findViewById<EditText>(R.id.edtFechaEdit)
+        val edtProfesion = findViewById<EditText>(R.id.edtProfesionEdit)
+        val spinnerGenero = findViewById<Spinner>(R.id.spinnerGenero)
 
-        builder.setView(input)
+        val btnEditar = findViewById<Button>(R.id.btnEditar)
+        val btnGuardar = findViewById<Button>(R.id.btnGuardarCambios)
 
-        builder.setPositiveButton("Guardar") { _, _ ->
+        if (editar) {
+            tvNombre.visibility = TextView.GONE
+            tvFecha.visibility = TextView.GONE
+            tvProfesion.visibility = TextView.GONE
+            tvGenero.visibility = TextView.GONE
 
-            val nuevoNombre = input.text.toString().trim()
+            edtNombre.visibility = EditText.VISIBLE
+            edtFecha.visibility = EditText.VISIBLE
+            edtProfesion.visibility = EditText.VISIBLE
+            spinnerGenero.visibility = Spinner.VISIBLE
 
-            if (nuevoNombre.isEmpty()) {
-                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
-                return@setPositiveButton
-            }
+            btnEditar.visibility = Button.GONE
+            btnGuardar.visibility = Button.VISIBLE
 
-            val userId = auth.currentUser?.uid ?: return@setPositiveButton
-            val userRef = database.reference.child("Usuarios").child(userId)
+        } else {
+            tvNombre.visibility = TextView.VISIBLE
+            tvFecha.visibility = TextView.VISIBLE
+            tvProfesion.visibility = TextView.VISIBLE
+            tvGenero.visibility = TextView.VISIBLE
 
-            userRef.child("nombre").setValue(nuevoNombre)
-                .addOnSuccessListener {
-                    findViewById<TextView>(R.id.tvNombre).text = nuevoNombre
-                    Toast.makeText(this, "Nombre actualizado", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
-                }
+            edtNombre.visibility = EditText.GONE
+            edtFecha.visibility = EditText.GONE
+            edtProfesion.visibility = EditText.GONE
+            spinnerGenero.visibility = Spinner.GONE
+
+            btnEditar.visibility = Button.VISIBLE
+            btnGuardar.visibility = Button.GONE
         }
-
-        builder.setNegativeButton("Cancelar", null)
-        builder.show()
     }
 }
