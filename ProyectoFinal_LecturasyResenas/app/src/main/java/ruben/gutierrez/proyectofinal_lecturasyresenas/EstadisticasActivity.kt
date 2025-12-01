@@ -3,6 +3,7 @@ package ruben.gutierrez.proyectofinal_lecturasyresenas
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,6 @@ class EstadisticasActivity : AppCompatActivity() {
         inicializarTarjetas()
         cargarEstadisticas()
 
-        //Esto es para que el icono de estadísticas esté seleccionado
         bottomNavigation.selectedItemId = R.id.nav_estadisticas
 
         bottomNavigation.setOnItemSelectedListener { item ->
@@ -46,6 +46,10 @@ class EstadisticasActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+
+        findViewById<ImageView>(R.id.boton_perfil).setOnClickListener {
+            startActivity(Intent(this, PerfilActivity::class.java))
         }
     }
 

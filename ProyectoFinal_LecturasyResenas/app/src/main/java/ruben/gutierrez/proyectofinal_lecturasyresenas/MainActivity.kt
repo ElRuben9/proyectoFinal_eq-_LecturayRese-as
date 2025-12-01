@@ -45,12 +45,6 @@ class MainActivity : AppCompatActivity() {
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
 
-        // creamos los tabs manualmente
-            //con "tabs" me refiero a los filtros del menú
-        tabs.addTab(tabs.newTab().setText("Todos"))
-        tabs.addTab(tabs.newTab().setText("Por leer"))
-        tabs.addTab(tabs.newTab().setText("En curso"))
-        tabs.addTab(tabs.newTab().setText("Terminados"))
 
         tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
