@@ -46,7 +46,8 @@ class LibroViewModel : ViewModel() {
                         portadaUri = l.portadaUri,
                         rating = l.rating,
                         resumen = l.resumen,
-                        userId = l.userId
+                        userId = l.userId,
+                        estadoLectura = l.estadoLectura
                     )
                 }
 

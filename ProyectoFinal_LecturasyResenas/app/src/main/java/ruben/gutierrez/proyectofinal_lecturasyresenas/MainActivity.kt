@@ -73,10 +73,15 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[LibroViewModel::class.java]
 
         viewModel.libros.observe(this) { lista ->
+            lista.forEach {
+                Log.d("ESTADOS_DEBUG", "Libro: ${it.titulo} | estadoLectura='${it.estadoLectura}'")
+            }
+
             listaOriginal = lista
 
             // esto APLICA el filtro actual
             filtrarLibrosPorEstado(filtroActual)
+
         }
 
 
