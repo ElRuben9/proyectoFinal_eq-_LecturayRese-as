@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
+import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.StatisticsManager
 
 
 class DetalleLibroActivity : AppCompatActivity() {
@@ -190,6 +191,7 @@ class DetalleLibroActivity : AppCompatActivity() {
     private fun actualizarPaginaActual(pagina: Int) {
         val libro = libroActual ?: return
         val paginasTotales = libro.paginas ?: 1
+        val paginaAnterior = libro.paginaActual ?: 0
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
         val nuevoEstado =
@@ -209,6 +211,12 @@ class DetalleLibroActivity : AppCompatActivity() {
             .update(updates)
             .addOnSuccessListener {
                 progressBar.progress = pagina
+
+                // Llamadas al manager de estadisticas
+                StatisticsManager().registrarPaginas(pagina - paginaAnterior)
+                if(nuevoEstado == "Terminado")
+                    StatisticsManager().registrarLibroLeido()
+
                 Toast.makeText(this, "Progreso actualizado", Toast.LENGTH_SHORT).show()
                 cargarLibroDesdeFirestore(idLibro!!)
             }

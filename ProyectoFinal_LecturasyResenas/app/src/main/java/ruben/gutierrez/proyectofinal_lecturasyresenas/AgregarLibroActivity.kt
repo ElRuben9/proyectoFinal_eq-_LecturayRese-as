@@ -14,6 +14,7 @@ import com.cloudinary.android.callback.UploadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import ruben.gutierrez.proyectofinal_lecturasyresenas.model.Libro
+import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.StatisticsManager
 
 class AgregarLibroActivity : AppCompatActivity() {
 
@@ -284,6 +285,12 @@ class AgregarLibroActivity : AppCompatActivity() {
 
         ref.set(libroConId)
             .addOnSuccessListener {
+                // Llamadas al manager de estadisticas
+                StatisticsManager().registrarPaginas(libro.paginaActual!!)
+                if(libro.estadoLectura == "Terminado")
+                    StatisticsManager().registrarLibroLeido()
+
+
                 Toast.makeText(this, "Libro guardado correctamente", Toast.LENGTH_SHORT).show()
                 finish()
             }
