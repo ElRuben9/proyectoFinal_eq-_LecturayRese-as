@@ -46,8 +46,6 @@ class DetalleLibroActivity : AppCompatActivity() {
 
     private lateinit var libro: Libro
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_libro)
@@ -82,11 +80,8 @@ class DetalleLibroActivity : AppCompatActivity() {
 
         btnEditarDatos = findViewById(R.id.btnEditarDatos)
 
-
-
         idLibro = intent.getStringExtra("idLibro")
         if (idLibro != null) cargarLibroDesdeFirestore(idLibro!!)
-
 
         btnIniciarLibro.setOnClickListener {
             actualizarEstadoLibro("En curso", 1)
@@ -108,14 +103,17 @@ class DetalleLibroActivity : AppCompatActivity() {
         }
 
         btnEditarDatos.setOnClickListener {
+            // ✔ CAMBIO: mandar solo idLibro y recargar después
             val intent = Intent(this, EditarLibroActivity::class.java)
-            intent.putExtra("libro", libroActual)
-            startActivityForResult(intent, 300)
+            intent.putExtra("libroId", idLibro) // ← agregado
+            startActivityForResult(intent, 300)  // ← agregado
         }
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_detalle_libro)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
     }
-
-
 
     // carga los datos del libro
     private fun cargarLibroDesdeFirestore(idLibro: String) {
@@ -137,10 +135,7 @@ class DetalleLibroActivity : AppCompatActivity() {
             }
     }
 
-
-    // muestra los datos
     private fun mostrarDatosDelLibro(libro: Libro) {
-
         tvTitulo.text = libro.titulo
         tvAutor.text = libro.autor
         tvCategoria.text = libro.categoria
@@ -157,16 +152,12 @@ class DetalleLibroActivity : AppCompatActivity() {
         ratingBar.rating = libro.rating ?: 0f
         tvValorRating.text = (libro.rating ?: 0f).toString()
 
-        // este muestra el progress bar
         progressBar.max = libro.paginas ?: 1
         progressBar.progress = libro.paginaActual ?: 0
     }
 
-
-    // Dependiendo el estado de la lectura se mostrara uno u otro
     private fun actualizarVistaSegunEstado(libro: Libro) {
         when (libro.estadoLectura) {
-
             "Por leer" -> {
                 layoutProgreso.visibility = View.GONE
                 btnIniciarLibro.visibility = View.VISIBLE
@@ -196,14 +187,11 @@ class DetalleLibroActivity : AppCompatActivity() {
         }
     }
 
-
-    // Actualiza el progreso del libro
     private fun actualizarPaginaActual(pagina: Int) {
         val libro = libroActual ?: return
         val paginasTotales = libro.paginas ?: 1
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
-        // Hace el autocambio a TERMINADO
         val nuevoEstado =
             if (pagina >= paginasTotales) "Terminado"
             else "En curso"
@@ -220,18 +208,12 @@ class DetalleLibroActivity : AppCompatActivity() {
             .document(idLibro!!)
             .update(updates)
             .addOnSuccessListener {
-
-                // actualiza el progressbar in liveee
                 progressBar.progress = pagina
-
                 Toast.makeText(this, "Progreso actualizado", Toast.LENGTH_SHORT).show()
-
                 cargarLibroDesdeFirestore(idLibro!!)
             }
     }
 
-
-    // cambia estado al iniciar
     private fun actualizarEstadoLibro(nuevoEstado: String, paginaInicial: Int = 0) {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -250,8 +232,6 @@ class DetalleLibroActivity : AppCompatActivity() {
             }
     }
 
-
-    // para cuando se finaliza el libro
     private fun mostrarFinalizacion() {
         layoutFinalizar.visibility = View.VISIBLE
     }
@@ -281,8 +261,7 @@ class DetalleLibroActivity : AppCompatActivity() {
             }
     }
 
-
-    //ESTO HACE QUE CUANDO TERMINES DE EDITAR UN LIBRO EN EL EDITARLIBROACTIVITY SE REFRESQUE ESTA PANTALLA AUTOMATICAMENTE
+    // ESTOOO refresca al volver desde EditarLibroActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -290,5 +269,5 @@ class DetalleLibroActivity : AppCompatActivity() {
             cargarLibroDesdeFirestore(idLibro!!)
         }
     }
-
 }
+

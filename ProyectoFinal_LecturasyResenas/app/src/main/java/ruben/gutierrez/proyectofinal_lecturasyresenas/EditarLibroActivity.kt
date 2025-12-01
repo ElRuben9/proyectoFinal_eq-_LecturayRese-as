@@ -33,14 +33,14 @@ class EditarLibroActivity : AppCompatActivity() {
     private val firestore = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
-    private lateinit var libro: Libro
+    private lateinit var libroId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.editar_libro)
 
-        libro = intent.getSerializableExtra("libro") as? Libro
-            ?: run { finish(); return }
+        // recibimos solo el ID
+        libroId = intent.getStringExtra("libroId") ?: run { finish(); return }
 
         imgPortada = findViewById(R.id.imgPortadaEditar)
         etTitulo = findViewById(R.id.etTituloEditar)
@@ -49,17 +49,35 @@ class EditarLibroActivity : AppCompatActivity() {
         etSinopsis = findViewById(R.id.etSinopsisEditar)
         btnGuardar = findViewById(R.id.btnGuardarCambios)
 
-        if (!libro.portadaUri.isNullOrEmpty()) {
-            Picasso.get().load(libro.portadaUri).into(imgPortada)
-        }
-
-        etTitulo.setText(libro.titulo)
-        etAutor.setText(libro.autor)
-        etIsbn.setText(libro.isbn ?: "")
-        etSinopsis.setText(libro.sinopsis ?: "")
+        cargarDatos()
 
         imgPortada.setOnClickListener { seleccionarImagen() }
         btnGuardar.setOnClickListener { guardarCambios() }
+
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_editar_libro)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+    }
+
+    // Obtiene datos reales desde Firestore
+    private fun cargarDatos() {
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("libros")
+            .document(libroId)
+            .get()
+            .addOnSuccessListener { doc ->
+                val libro = doc.toObject(Libro::class.java) ?: return@addOnSuccessListener
+
+                if (!libro.portadaUri.isNullOrEmpty()) {
+                    Picasso.get().load(libro.portadaUri).into(imgPortada)
+                }
+                etTitulo.setText(libro.titulo)
+                etAutor.setText(libro.autor)
+                etIsbn.setText(libro.isbn ?: "")
+                etSinopsis.setText(libro.sinopsis ?: "")
+            }
     }
 
     private fun seleccionarImagen() {
@@ -88,7 +106,7 @@ class EditarLibroActivity : AppCompatActivity() {
         }
 
         if (nuevaPortadaUri == null) {
-            actualizarFirestore(libro.portadaUri, titulo, autor, isbn, sinopsis)
+            actualizarFirestore(null, titulo, autor, isbn, sinopsis)
         } else {
             subirImagenACloudinary(titulo, autor, isbn, sinopsis)
         }
@@ -111,9 +129,7 @@ class EditarLibroActivity : AppCompatActivity() {
 
                 override fun onSuccess(requestId: String?, resultData: Map<*, *>) {
                     val url = resultData["secure_url"] as? String
-                    if (url != null) {
-                        actualizarFirestore(url, titulo, autor, isbn, sinopsis)
-                    }
+                    actualizarFirestore(url, titulo, autor, isbn, sinopsis)
                 }
 
                 override fun onError(requestId: String?, error: ErrorInfo?) {
@@ -139,29 +155,26 @@ class EditarLibroActivity : AppCompatActivity() {
         isbn: String,
         sinopsis: String,
     ) {
-        val idLibro = libro.id ?: return
+        val datos = mutableMapOf<String, Any>()
 
-        val datos = mapOf(
-            "portadaUri" to portadaUrl,
-            "titulo" to titulo,
-            "autor" to autor,
-            "isbn" to isbn,
-            "sinopsis" to sinopsis,
-        )
+        datos["titulo"] = titulo
+        datos["autor"] = autor
+        datos["isbn"] = isbn
+        datos["sinopsis"] = sinopsis
 
+        if (portadaUrl != null) datos["portadaUri"] = portadaUrl
 
         firestore.collection("usuarios")
             .document(userId)
             .collection("libros")
-            .document(idLibro)
+            .document(libroId)
             .update(datos)
             .addOnSuccessListener {
                 Toast.makeText(this, "Cambios guardados", Toast.LENGTH_SHORT).show()
 
-                setResult(RESULT_OK)
+                setResult(RESULT_OK) // notifica a DetalleLibroActivity para que no se pongan los datos mock
                 finish()
             }
     }
 }
-
 
