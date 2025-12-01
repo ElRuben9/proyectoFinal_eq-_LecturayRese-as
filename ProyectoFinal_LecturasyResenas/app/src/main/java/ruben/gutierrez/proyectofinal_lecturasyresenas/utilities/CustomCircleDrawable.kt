@@ -17,9 +17,9 @@ class CustomCircleDrawable: Drawable {
     var grosorMetrica: Int = 0
     var grosorFondo: Int = 0
     var context: Context? = null
-    var emociones = ArrayList<Emociones>()
+    var emociones = ArrayList<Category>()
 
-    constructor(context: Context, emociones: ArrayList<Emociones>) {
+    constructor(context: Context, emociones: ArrayList<Category>) {
         this.context = context
         grosorMetrica = context.resources.getDimensionPixelSize(R.dimen.graphWith)
         grosorFondo = context.resources.getDimensionPixelSize(R.dimen.graphBackground)

@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.CustomBarDrawable
 import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.CustomCircleDrawable
-import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.Emociones
+import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.Category
+import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.FullBarChartDrawable
+import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.FullPieChartDrawable
 
 class EstadisticasActivity : AppCompatActivity() {
 
@@ -46,19 +48,19 @@ class EstadisticasActivity : AppCompatActivity() {
         val graphPaginasAno = findViewById<View>(R.id.graficaPaginasAno).findViewById<View>(R.id.graphBarra)
 
         // Ejemplo de datos
-        val librosPorMes = listOf(5f, 2f, 3f, 4f, 6f, 1f, 7f, 3f, 2f, 5f, 4f, 8f)
+        val librosPorMes = listOf(5, 2, 3, 4, 6, 1, 7, 3, 2, 5, 4, 8)
         val categorias = ArrayList(listOf(
-            Emociones("Ficción", 40f, R.color.blue, 10f),
-            Emociones("No Ficción", 30f, R.color.orange, 8f),
-            Emociones("Fantasía", 30f, R.color.greenie, 7f)
+            Category("Ficción", 40f, R.color.blue, 12f),
+            Category("No Ficción", 30f, R.color.orange, 8f),
+            Category("Fantasía", 30f, R.color.greenie, 8f)
         ))
 
-        graphLibrosMes.background = CustomBarDrawable(this, categorias[1])
-        graphLibrosAno.background = CustomBarDrawable(this, categorias[1])
-        graphCategorias.background = CustomCircleDrawable(this, categorias)
-        graphGeneros.background = CustomCircleDrawable(this, categorias)
-        graphPaginasMes.background = CustomBarDrawable(this, categorias[1])
-        graphPaginasAno.background = CustomBarDrawable(this, categorias[1])
+        graphLibrosMes.background = FullBarChartDrawable(this, categorias)
+        graphLibrosAno.background = FullBarChartDrawable(this, categorias)
+        graphCategorias.background = FullPieChartDrawable(this, categorias)
+        graphGeneros.background = FullPieChartDrawable(this, categorias)
+        graphPaginasMes.background = FullBarChartDrawable(this, categorias)
+        graphPaginasAno.background = FullBarChartDrawable(this, categorias)
 
 
 

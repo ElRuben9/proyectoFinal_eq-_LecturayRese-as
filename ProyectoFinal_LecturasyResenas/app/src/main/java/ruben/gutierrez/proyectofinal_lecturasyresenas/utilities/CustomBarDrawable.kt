@@ -13,9 +13,9 @@ import ruben.gutierrez.proyectofinal_lecturasyresenas.R
 class CustomBarDrawable : Drawable {
     var coordenadas: RectF? = null
     var context: Context? = null
-    var emocion: Emociones? = null
+    var emocion: Category? = null
 
-    constructor(context: Context, emocion: Emociones) {
+    constructor(context: Context, emocion: Category) {
         this.context = context
         this.emocion = emocion
     }
