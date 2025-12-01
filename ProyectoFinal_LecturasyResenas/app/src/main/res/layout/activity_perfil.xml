@@ -71,9 +71,10 @@
                 android:gravity="center">
 
                 <TextView
-                    android:text="24"
+                    android:id="@+id/tvLibrosLeidos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -93,7 +94,8 @@
                 android:gravity="center">
 
                 <TextView
-                    android:text="156"
+                    android:id="@+id/tvPaginasHoy"
+                    android:text="0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -115,7 +117,8 @@
                 android:gravity="center">
 
                 <TextView
-                    android:text="12"
+                    android:id="@+id/tvDiasSeguidos"
+                    android:text="0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"

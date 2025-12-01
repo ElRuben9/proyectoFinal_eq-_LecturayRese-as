@@ -15,6 +15,7 @@ import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.callback.ErrorInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
 class PerfilActivity : AppCompatActivity() {
@@ -70,13 +71,15 @@ class PerfilActivity : AppCompatActivity() {
         adaptadorGenero.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerGenero.adapter = adaptadorGenero
 
+        val tvLibrosLeidos = findViewById<TextView>(R.id.tvLibrosLeidos)
+        val tvPaginasHoy = findViewById<TextView>(R.id.tvPaginasHoy)
+        val tvDiasSeguidos = findViewById<TextView>(R.id.tvDiasSeguidos)
+
+
 
         val userId = auth.currentUser?.uid ?: return
         val userRef = database.reference.child("Usuarios").child(userId)
 
-        // -----------------------------
-        // CARGA DE DATOS INICIALES
-        // -----------------------------
 
         findViewById<Button>(R.id.btnCambiarContrasena).setOnClickListener {
             startActivity(Intent(this, CambiarPassword::class.java))
@@ -125,17 +128,11 @@ class PerfilActivity : AppCompatActivity() {
         })
 
 
-        // -----------------------------
-        // CAMBIAR FOTO
-        // -----------------------------
         tvCambiarFoto.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             seleccionarImagen.launch(intent)
         }
 
-        // -----------------------------
-        // DATE PICKER PARA FECHA
-        // -----------------------------
         edtFecha.setOnClickListener {
             val cal = Calendar.getInstance()
             val dp = DatePickerDialog(
@@ -151,16 +148,12 @@ class PerfilActivity : AppCompatActivity() {
             dp.show()
         }
 
-        // -----------------------------
-        // BOTÓN EDITAR → activa modo edición
-        // -----------------------------
+
         btnEditar.setOnClickListener {
             cambiarModoEdicion(true)
         }
 
-        // -----------------------------
-        // BOTÓN GUARDAR CAMBIOS
-        // -----------------------------
+
         btnGuardar.setOnClickListener {
 
             val nuevoNombre = edtNombre.text.toString().trim()
@@ -197,12 +190,73 @@ class PerfilActivity : AppCompatActivity() {
                     Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
                 }
         }
-
+        cargarEstadisticas()
     }
 
-    // -----------------------------
-    // SUBIR FOTO A CLOUDINARY
-    // -----------------------------
+    private fun cargarEstadisticas() {
+        val userId = auth.currentUser?.uid ?: return
+        val firestore = FirebaseFirestore.getInstance()
+
+        val tvLibrosLeidos = findViewById<TextView>(R.id.tvLibrosLeidos)
+        val tvPaginasHoy = findViewById<TextView>(R.id.tvPaginasHoy)
+        val tvDiasSeguidos = findViewById<TextView>(R.id.tvDiasSeguidos)
+
+        // 1️⃣ LIBROS LEÍDOS
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("libros")
+            .whereEqualTo("estadoLectura", "Terminado")
+            .get()
+            .addOnSuccessListener { snap ->
+                tvLibrosLeidos.text = snap.size().toString()
+            }
+
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd")
+        val hoy = sdf.format(java.util.Date())
+
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("historialLectura")
+            .document(hoy)
+            .get()
+            .addOnSuccessListener { doc ->
+                val paginas = doc.getLong("paginasLeidas") ?: 0
+                tvPaginasHoy.text = paginas.toString()
+            }
+
+
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("historialLectura")
+            .get()
+            .addOnSuccessListener { snap ->
+
+                val fechas = snap.documents
+                    .mapNotNull { it.id }
+                    .sortedDescending() // yyyy-MM-dd funciona perfecto
+
+                var racha = 0
+
+                val cal = java.util.Calendar.getInstance()
+
+                for (i in fechas.indices) {
+                    val fecha = fechas[i]
+
+                    val fechaDate = sdf.parse(fecha)
+
+                    cal.time = java.util.Date()
+                    cal.add(java.util.Calendar.DAY_OF_MONTH, -racha)
+                    val fechaEsperada = sdf.format(cal.time)
+
+                    if (fecha == fechaEsperada) {
+                        racha++
+                    } else break
+                }
+
+                tvDiasSeguidos.text = racha.toString()
+            }
+    }
+
     private fun subirImagenACloudinary() {
         val uri = nuevaImagenUri ?: return
 
@@ -247,9 +301,7 @@ class PerfilActivity : AppCompatActivity() {
             }
     }
 
-    // -----------------------------
-    // CONTROL DE MODO EDICIÓN
-    // -----------------------------
+
     private fun cambiarModoEdicion(editar: Boolean) {
 
         val tvNombre = findViewById<TextView>(R.id.tvNombre)

@@ -13,6 +13,30 @@ import ruben.gutierrez.proyectofinal_lecturasyresenas.utilities.StatisticsManage
 
 
 class DetalleLibroActivity : AppCompatActivity() {
+    private val firestore = FirebaseFirestore.getInstance()
+
+    private fun registrarPaginasLeidas(paginasAntes: Int, paginasDespues: Int) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val paginasLeidas = paginasDespues - paginasAntes
+
+        if (paginasLeidas <= 0) return
+
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd")
+        val hoy = sdf.format(java.util.Date())
+
+        val docRef = firestore.collection("usuarios")
+            .document(userId)
+            .collection("historialLectura")
+            .document(hoy)
+
+        val datos = mapOf(
+            "paginasLeidas" to com.google.firebase.firestore.FieldValue.increment(paginasLeidas.toLong()),
+            "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+        )
+
+        docRef.set(datos, com.google.firebase.firestore.SetOptions.merge())
+    }
+
 
     private lateinit var layoutProgreso: LinearLayout
     private lateinit var layoutResumen: LinearLayout
@@ -116,7 +140,13 @@ class DetalleLibroActivity : AppCompatActivity() {
         }
     }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
     // carga los datos del libro
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
     private fun cargarLibroDesdeFirestore(idLibro: String) {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -155,6 +185,9 @@ class DetalleLibroActivity : AppCompatActivity() {
 
         progressBar.max = libro.paginas ?: 1
         progressBar.progress = libro.paginaActual ?: 0
+
+        etPaginas.hint = "Página actual: ${libro.paginaActual ?: 0}"
+
     }
 
     private fun actualizarVistaSegunEstado(libro: Libro) {
@@ -191,9 +224,28 @@ class DetalleLibroActivity : AppCompatActivity() {
     private fun actualizarPaginaActual(pagina: Int) {
         val libro = libroActual ?: return
         val paginasTotales = libro.paginas ?: 1
+<<<<<<< Updated upstream
         val paginaAnterior = libro.paginaActual ?: 0
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
+=======
+<<<<<<< HEAD
+        val paginasAntes = libro.paginaActual ?: 0
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+        // 1) VALIDACIÓN: NO PERMITIR NÚMERO MENOR
+        if (pagina < paginasAntes) {
+            Toast.makeText(this, "No puedes ingresar un número menor al progreso actual", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2) SI ES MAYOR O IGUAL, SE GUARDA Y SE CALCULA PÁGINAS LEÍDAS
+=======
+        val paginaAnterior = libro.paginaActual ?: 0
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
+>>>>>>> Stashed changes
         val nuevoEstado =
             if (pagina >= paginasTotales) "Terminado"
             else "En curso"
@@ -203,13 +255,13 @@ class DetalleLibroActivity : AppCompatActivity() {
             "estadoLectura" to nuevoEstado
         )
 
-        FirebaseFirestore.getInstance()
-            .collection("usuarios")
+        firestore.collection("usuarios")
             .document(userId)
             .collection("libros")
             .document(idLibro!!)
             .update(updates)
             .addOnSuccessListener {
+<<<<<<< Updated upstream
                 progressBar.progress = pagina
 
                 // Llamadas al manager de estadisticas
@@ -218,10 +270,39 @@ class DetalleLibroActivity : AppCompatActivity() {
                     StatisticsManager().registrarLibroLeido()
 
                 Toast.makeText(this, "Progreso actualizado", Toast.LENGTH_SHORT).show()
+=======
+<<<<<<< HEAD
+
+                // ✔ Registrar el número de páginas leídas hoy
+                registrarPaginasLeidas(paginasAntes, pagina)
+
+                progressBar.progress = pagina
+                Toast.makeText(this, "Progreso actualizado", Toast.LENGTH_SHORT).show()
+
+                // Recargar el libro para actualizar la UI
+=======
+                progressBar.progress = pagina
+
+                // Llamadas al manager de estadisticas
+                StatisticsManager().registrarPaginas(pagina - paginaAnterior)
+                if(nuevoEstado == "Terminado")
+                    StatisticsManager().registrarLibroLeido()
+
+                Toast.makeText(this, "Progreso actualizado", Toast.LENGTH_SHORT).show()
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
+>>>>>>> Stashed changes
                 cargarLibroDesdeFirestore(idLibro!!)
             }
     }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
+>>>>>>> Stashed changes
     private fun actualizarEstadoLibro(nuevoEstado: String, paginaInicial: Int = 0) {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -240,6 +321,13 @@ class DetalleLibroActivity : AppCompatActivity() {
             }
     }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
+>>>>>>> Stashed changes
     private fun mostrarFinalizacion() {
         layoutFinalizar.visibility = View.VISIBLE
     }
@@ -269,7 +357,14 @@ class DetalleLibroActivity : AppCompatActivity() {
             }
     }
 
+<<<<<<< Updated upstream
     // ESTOOO refresca al volver desde EditarLibroActivity
+=======
+<<<<<<< HEAD
+=======
+    // ESTOOO refresca al volver desde EditarLibroActivity
+>>>>>>> 94b289fb0013eb68626fa259aef3fb180898083d
+>>>>>>> Stashed changes
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
