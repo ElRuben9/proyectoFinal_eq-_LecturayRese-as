@@ -1,9 +1,11 @@
 package ruben.gutierrez.proyectofinal_lecturasyresenas
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -67,7 +69,22 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 onTabSelected(tab)
             }
+
         })
+
+        tabs.setTabTextColors(
+            Color.parseColor("#666666"),
+            Color.parseColor("#000000")
+        )
+
+        val titles = listOf("Todos", "Por leer", "En curso", "Terminado")
+
+        for (i in 0 until tabs.tabCount) {
+            val tab = tabs.getTabAt(i)
+            val custom = layoutInflater.inflate(R.drawable.tab_text, null)
+            custom.findViewById<TextView>(R.id.tabText).text = titles[i]
+            tab?.customView = custom
+        }
 
         //PARA EL FIREBASE
         viewModel = ViewModelProvider(this)[LibroViewModel::class.java]
@@ -99,6 +116,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+
+        // Ajustar padding del recycler respecto a la barra inferior
+        bottomNavigation.post {
+            val navHeight = bottomNavigation.height
+            recycler.setPadding(0, 0, 0, navHeight + 40) // 40dp extra por seguridad
+            recycler.clipToPadding = false
         }
 
         //FABICON PARA AGREGAR LIBRO

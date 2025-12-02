@@ -63,10 +63,10 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/portadaLibro"
-            app:layout_constraintTop_toBottomOf="@id/portadaLibro"
+            app:layout_constraintStart_toStartOf="@id/ratingBar"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"
             tools:progress="55"
             android:progressTint="@color/darkBlue"/>
 
