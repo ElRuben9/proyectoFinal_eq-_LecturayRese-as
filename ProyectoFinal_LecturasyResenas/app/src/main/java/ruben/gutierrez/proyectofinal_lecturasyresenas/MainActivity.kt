@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0 until tabs.tabCount) {
             val tab = tabs.getTabAt(i)
-            val custom = layoutInflater.inflate(R.drawable.tab_text, null)
+            val custom = layoutInflater.inflate(R.layout.tab_text, null)
             custom.findViewById<TextView>(R.id.tabText).text = titles[i]
             tab?.customView = custom
         }
